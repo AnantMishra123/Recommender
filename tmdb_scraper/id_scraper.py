@@ -27,7 +27,7 @@ def get_pd_df(movies:list[int]):
     return df
 
 start_time = time.time()
-movies = pd.read_csv("tmdb_scraper/movie_ids.csv", nrows=100)["id"]
+movies = pd.read_csv("tmdb_scraper/movie_ids.csv")["id"]
 data_frame = get_pd_df(movies)
 data_frame.to_csv("movie_db.csv")
 print(f"End time {time.time() - start_time}")
