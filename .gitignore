@@ -43,3 +43,8 @@ Thumbs.db
 # virtual environments #
 #######################
 recenv/
+
+# data #
+########
+temp/
+data/
