@@ -14,14 +14,19 @@ information_needed = ['adult', 'backdrop_path', 'belongs_to_collection', 'budget
 
 def get_movie(id:int):
     request = requests.get(f"https://api.themoviedb.org/3/movie/{id}", params={"api_key":api_key, "append_to_response":"keywords,credits"})
+    if request.status_code != 200:
+        return None
     return request.json()
 
 
 def get_pd_df(movies:list[int]):
     data = []
+    prev_time = time.time()
     for i, id in enumerate(movies):
-        if i % 1000 == 0:
-            print(i)
+        if i % 10 == 0:
+            new_time = time.time()
+            print(i, prev_time - new_time)
+            prev_time = new_time
         movie_info = get_movie(id)
         if movie_info:
             data.append({key: movie_info.get(key, None) for key in information_needed})
