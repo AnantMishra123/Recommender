@@ -19,7 +19,9 @@ def get_movie(id:int):
 
 def get_pd_df(movies:list[int]):
     data = []
-    for id in movies:
+    for i, id in enumerate(movies):
+        if i % 1000 == 0:
+            print(i)
         movie_info = get_movie(id)
         if movie_info:
             data.append({key: movie_info.get(key, None) for key in information_needed})
