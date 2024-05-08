@@ -2,8 +2,7 @@ import requests
 import os
 from dotenv import load_dotenv
 import pandas as pd
-import json 
-
+import time
 load_dotenv()
 
 
@@ -15,13 +14,20 @@ information_needed = ['adult', 'backdrop_path', 'belongs_to_collection', 'budget
 
 def get_movie(id:int):
     request = requests.get(f"https://api.themoviedb.org/3/movie/{id}", params={"api_key":api_key, "append_to_response":"keywords,credits"})
-    
-    if request.status_code == 200:
-        print(request.json()["title"])
-    with open("temp.json", "w") as file:
-        json.dump(request.json(), file)
-    
-
-get_movie(600)
+    return request.json()
 
 
+def get_pd_df(movies:list[int]):
+    data = []
+    for id in movies:
+        movie_info = get_movie(id)
+        if movie_info:
+            data.append({key: movie_info.get(key, None) for key in information_needed})
+    df = pd.DataFrame(data)
+    return df
+
+start_time = time.time()
+movies = pd.read_csv("tmdb_scraper/movie_ids.csv", nrows=100)["id"]
+data_frame = get_pd_df(movies)
+data_frame.to_csv("movie_db.csv")
+print(f"End time {time.time() - start_time}")
