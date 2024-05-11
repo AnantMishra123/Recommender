@@ -7,7 +7,7 @@ import asyncio
 
 load_dotenv()
 
-api_key = os.getenv("tmdb_api")
+api_key = os.getenv("tmdb_api_2")
 
 information_needed = ['adult', 'backdrop_path', 'belongs_to_collection', 'budget', 'genres', 'homepage', 'id',
                      'imdb_id', 'original_language', 'original_title', 'overview', 'popularity', 'poster_path',
@@ -32,19 +32,14 @@ def get_pd_df(movies):
     loop = asyncio.get_event_loop()
     movies_data = loop.run_until_complete(get_movies(movies))
     data = []
-    prev_time = time.time()
     for i, movie_info in enumerate(movies_data):
-        if i % 10 == 0:
-            new_time = time.time()
-            print(i, new_time - prev_time)
-            prev_time = new_time
         if movie_info:
             data.append({key: movie_info.get(key, None) for key in information_needed})
     df = pd.DataFrame(data)
     return df
 
 start_time = time.time()
-movies = pd.read_csv("data/movie_ids.csv")["id"].tolist()
+movies = pd.read_csv("data/movie_ids.csv")["id"].tolist()[:100]
 data_frame = get_pd_df(movies)
 data_frame.to_csv("data/movie_db.csv")
 print(f"End time {time.time() - start_time}")
