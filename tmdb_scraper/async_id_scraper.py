@@ -40,7 +40,13 @@ def get_pd_df(movies):
     return df
 
 start_time = time.time()
-movies = pd.read_csv("data/movie_ids.csv")["id"].tolist()[:100000]
-data_frame = get_pd_df(movies)
-data_frame.to_csv("data/async_movie_db.csv")
+movies = pd.read_csv("data/movie_ids.csv")["id"].tolist()[:1000]
+
+res = get_pd_df(movies[:100])
+
+for i in range(100, 1000, 100):
+    data_frame = get_pd_df(movies[i : i + 100])
+    res.append(data_frame)
+
+res.to_csv("data/async_movie_db.csv")
 print(f"End time {time.time() - start_time}")
