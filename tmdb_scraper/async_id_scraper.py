@@ -16,13 +16,16 @@ information_needed = ['adult', 'backdrop_path', 'belongs_to_collection', 'budget
                      'keywords', 'credits']
 
 async def fetch_movie(session, id):
-    async with session.get(f"https://api.themoviedb.org/3/movie/{id}", params={"api_key": api_key, "append_to_response": "keywords,credits"}, timeout=30) as response:
-        try:
-            return await response.json()
-        except Exception as e:
-            print(f"Error fetching movie {id}: {e}")
-            return None
-
+    try :
+        async with session.get(f"https://api.themoviedb.org/3/movie/{id}", params={"api_key": api_key, "append_to_response": "keywords,credits"}, timeout=30) as response:
+            try:
+                return await response.json()
+            except Exception as e:
+                print(f"Error fetching movie {id}: {e}")
+                return None
+    except Exception as e:
+        print(f"Error fetching movie {id}: {e}")
+        return None 
 async def get_movies(movies):
     async with aiohttp.ClientSession() as session:
         tasks = [fetch_movie(session, id) for id in movies]
@@ -47,6 +50,8 @@ for i in range(100, len(movies), 100):
     print(i)
     data_frame = get_pd_df(movies[i : i + 100])
     res = pd.concat([res, data_frame], ignore_index=True)
+    if i % 10000 == 0:
+        res.to_csv("data/async_movie_db.csv")
 
 res.to_csv("data/async_movie_db.csv")
 print(f"End time {time.time() - start_time}")
