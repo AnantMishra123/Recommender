@@ -40,11 +40,11 @@ def get_pd_df(movies):
     return df
 
 start_time = time.time()
-movies = pd.read_csv("data/movie_ids.csv")["id"].tolist()[:1000]
+movies = pd.read_csv("data/movie_ids.csv")["id"].tolist()
 
 res = get_pd_df(movies[:100])
 
-for i in range(100, 1000, 100):
+for i in range(100, len(movies), 100):
     data_frame = get_pd_df(movies[i : i + 100])
     res = pd.concat([res, data_frame], ignore_index=True)
 
