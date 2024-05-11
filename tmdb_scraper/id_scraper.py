@@ -6,7 +6,7 @@ import time
 load_dotenv()
 
 
-api_key = os.getenv("tmdb_api_2")
+api_key = os.getenv("tmdb_api")
 
 information_needed = ['adult', 'backdrop_path', 'belongs_to_collection', 'budget', 'genres', 'homepage', 'id', 
  'imdb_id', 'original_language', 'original_title', 'overview', 'popularity', 'poster_path', 'production_companies', 
@@ -38,7 +38,7 @@ def get_pd_df(movies:list[int]):
     return df
 
 start_time = time.time()
-movies = pd.read_csv("data/movie_ids.csv")["id"][:100000]
+movies = pd.read_csv("data/movie_ids.csv")["id"]
 data_frame = get_pd_df(movies)
 data_frame.to_csv("data/movie_db.csv")
 print(f"End time {time.time() - start_time}")
