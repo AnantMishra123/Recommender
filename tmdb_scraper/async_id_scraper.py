@@ -18,7 +18,6 @@ information_needed = ['adult', 'backdrop_path', 'belongs_to_collection', 'budget
 async def fetch_movie(session, id):
     async with session.get(f"https://api.themoviedb.org/3/movie/{id}", params={"api_key": api_key, "append_to_response": "keywords,credits"}, timeout=30) as response:
         try:
-            #print(f"fetched for {id=}")
             return await response.json()
         except Exception as e:
             print(f"Error fetching movie {id}: {e}")
@@ -45,6 +44,7 @@ movies = pd.read_csv("data/movie_ids.csv")["id"].tolist()
 res = get_pd_df(movies[:100])
 
 for i in range(100, len(movies), 100):
+    print(i)
     data_frame = get_pd_df(movies[i : i + 100])
     res = pd.concat([res, data_frame], ignore_index=True)
 
