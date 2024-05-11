@@ -46,7 +46,7 @@ res = get_pd_df(movies[:100])
 
 for i in range(100, 1000, 100):
     data_frame = get_pd_df(movies[i : i + 100])
-    res = pd.concat(res, data_frame, ignore_index=True)
+    res = pd.concat([res, data_frame], ignore_index=True)
 
 res.to_csv("data/async_movie_db.csv")
 print(f"End time {time.time() - start_time}")
