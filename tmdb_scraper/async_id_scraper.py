@@ -18,6 +18,7 @@ information_needed = ['adult', 'backdrop_path', 'belongs_to_collection', 'budget
 async def fetch_movie(session, id):
     async with session.get(f"https://api.themoviedb.org/3/movie/{id}", params={"api_key": api_key, "append_to_response": "keywords,credits"}) as response:
         try:
+            print(f"fetched for {id=}")
             return await response.json()
         except Exception as e:
             print(f"Error fetching movie {id}: {e}")
