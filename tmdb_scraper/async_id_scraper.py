@@ -4,6 +4,7 @@ import pandas as pd
 import time
 from dotenv import load_dotenv
 import asyncio
+import polars as pl
 
 load_dotenv()
 
@@ -37,21 +38,35 @@ def get_pd_df(movies):
     data = []
     for i, movie_info in enumerate(movies_data):
         if movie_info:
-            data.append({key: movie_info.get(key, None) for key in information_needed})
+            data.append({key: movie_info.get(key, "") for key in information_needed})
     df = pd.DataFrame(data)
     return df
 
+def append_to_file(src, dst):
+    with open(src, "r") as s:
+        s.readline()
+        content = s.read()
+        with open (dst, "a") as d:
+            d.write(content)
+    
+
 start_time = time.time()
-movies = pd.read_csv("data/movie_ids.csv")["id"].tolist()
-
+movies = list(pd.read_csv("data/movie_ids.csv")["id"])
+movies.sort()
 res = get_pd_df(movies[:100])
+res.head(0).to_csv("data/async_movie_db.csv")
 
-for i in range(100, len(movies), 100):
-    print(i)
+reset = False
+for i in range(100, 500000, 100):
     data_frame = get_pd_df(movies[i : i + 100])
-    res = pd.concat([res, data_frame], ignore_index=True)
+    if reset:
+        res = data_frame
+        reset = False
+    else:
+        res = pd.concat([res, data_frame], ignore_index=True)
     if i % 10000 == 0:
-        res.to_csv("data/async_movie_db.csv")
+        res.to_csv("temp/temp_movies.csv")
+        append_to_file("temp/temp_movies.csv", "data/async_movie_db.csv")
+        reset = True
 
-res.to_csv("data/async_movie_db.csv")
 print(f"End time {time.time() - start_time}")
