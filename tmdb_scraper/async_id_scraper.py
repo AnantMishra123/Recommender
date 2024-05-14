@@ -53,20 +53,21 @@ def append_to_file(src, dst):
 start_time = time.time()
 movies = list(pd.read_csv("data/movie_ids.csv")["id"])
 movies.sort()
-res = get_pd_df(movies[:100])
-res.head(0).to_csv("data/async_movie_db.csv")
+res = get_pd_df(movies[100000])
+res.head(0).to_csv("data/async_movie_db_100K_200K.csv")
 
 reset = False
-for i in range(100, 100000, 100):
+for i in range(100000, 200000, 100):
     data_frame = get_pd_df(movies[i : i + 100])
     if reset:
         res = data_frame
         reset = False
     else:
         res = pd.concat([res, data_frame], ignore_index=True)
-    if i % 10000 == 0:
+    if i % 1000 == 0:
+        print(i)
         res.to_csv("temp/temp_movies.csv")
-        append_to_file("temp/temp_movies.csv", "data/async_movie_db.csv")
+        append_to_file("temp/temp_movies.csv", "data/async_movie_db_100K_200K.csv")
         reset = True
 
 print(f"End time {time.time() - start_time}")
