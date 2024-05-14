@@ -53,7 +53,7 @@ def append_to_file(src, dst):
 start_time = time.time()
 movies = list(pd.read_csv("data/movie_ids.csv")["id"])
 movies.sort()
-res = get_pd_df(movies[100000])
+res = get_pd_df([movies[100000]])
 res.head(0).to_csv("data/async_movie_db_100K_200K.csv")
 
 reset = False
