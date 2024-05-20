@@ -8,13 +8,17 @@ import polars as pl
 
 load_dotenv()
 
-api_key = os.getenv("tmdb_api_2")
+api_key = os.getenv("tmdb_api")
 
 information_needed = ['adult', 'backdrop_path', 'belongs_to_collection', 'budget', 'genres', 'homepage', 'id',
                      'imdb_id', 'original_language', 'original_title', 'overview', 'popularity', 'poster_path',
                      'production_companies', 'production_countries', 'release_date', 'revenue', 'runtime',
                      'spoken_languages', 'status', 'tagline', 'title', 'video', 'vote_average', 'vote_count',
                      'keywords', 'credits']
+def clean_string(s):
+    if isinstance(s, str):
+        return s.replace('\r', '\\r').replace('\n', '\\n').replace('"', '""')
+    return s
 
 async def fetch_movie(session, id):
     try :
@@ -38,7 +42,7 @@ def get_pd_df(movies):
     data = []
     for i, movie_info in enumerate(movies_data):
         if movie_info:
-            data.append({key: movie_info.get(key, "") for key in information_needed})
+            data.append({key: clean_string(movie_info.get(key, "")) for key in information_needed})
     df = pd.DataFrame(data)
     return df
 
@@ -54,10 +58,10 @@ start_time = time.time()
 movies = list(pd.read_csv("data/movie_ids.csv")["id"])
 movies.sort()
 res = get_pd_df([movies[100000]])
-res.head(0).to_csv("data/async_movie_db_100K_200K.csv")
+res.head(0).to_csv("data/async_movie_db_000K_500K.csv")
 
 reset = False
-for i in range(100000, 200000, 100):
+for i in range(0, 500000, 100):
     data_frame = get_pd_df(movies[i : i + 100])
     if reset:
         res = data_frame
@@ -67,7 +71,7 @@ for i in range(100000, 200000, 100):
     if i % 1000 == 0:
         print(i)
         res.to_csv("temp/temp_movies.csv")
-        append_to_file("temp/temp_movies.csv", "data/async_movie_db_100K_200K.csv")
+        append_to_file("temp/temp_movies.csv", "data/async_movie_db_000K_500K.csv")
         reset = True
 
 print(f"End time {time.time() - start_time}")
