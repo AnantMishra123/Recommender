@@ -61,7 +61,7 @@ res = get_pd_df([movies[100000]])
 res.head(0).to_csv("data/async_movie_db_000K_500K.csv")
 
 reset = False
-for i in range(0, 500000, 100):
+for i in range(0, 500001, 100):
     data_frame = get_pd_df(movies[i : i + 100])
     if reset:
         res = data_frame
